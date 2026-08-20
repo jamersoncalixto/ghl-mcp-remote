@@ -22,6 +22,7 @@ const PORT = Number(process.env.PORT ?? 8080);
 const provider = new McpOAuthProvider();
 
 const app = express();
+app.set("trust proxy", 1);
 app.disable("x-powered-by");
 app.use(cors({ exposedHeaders: ["Mcp-Session-Id"] }));
 app.use(express.json());

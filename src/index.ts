@@ -9,7 +9,6 @@ import { McpOAuthProvider, MCP_SCOPE } from "./auth/mcp-oauth-provider.js";
 import { ghlCallbackHandler } from "./auth/ghl-callback.js";
 import { runWithTenant } from "./tenant-context.js";
 import { startCleanupLoop } from "./db/oauth-store.js";
-import { pool } from "./db/pool.js";
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -30,15 +29,6 @@ app.use(express.json());
 
 app.get("/healthz", (_req, res) => {
   res.json({ ok: true });
-});
-
-app.get("/test-db", async (_req, res) => {
-  try {
-    const { rows } = await pool.query("SELECT now(), count(*) FROM mcp_oauth_clients;");
-    res.json({ ok: true, rows });
-  } catch (err: any) {
-    res.status(500).json({ ok: false, error: err.message, stack: err.stack });
-  }
 });
 
 // Mounts /.well-known/oauth-authorization-server, /.well-known/oauth-protected-resource/mcp,

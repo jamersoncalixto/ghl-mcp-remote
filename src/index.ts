@@ -98,6 +98,11 @@ app.delete("/mcp", bearerAuth, (_req, res) => {
 
 startCleanupLoop();
 
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error("[Express Error Handler]", err);
+  res.status(500).json({ error: "server_error", details: err?.message || String(err) });
+});
+
 app.listen(PORT, () => {
   console.log(`[ghl-mcp-remote] listening on :${PORT} — issuer ${PUBLIC_URL.toString()}`);
 });

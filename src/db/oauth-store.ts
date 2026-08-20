@@ -19,13 +19,18 @@ export class PgOAuthClientsStore implements OAuthRegisteredClientsStore {
   async registerClient(
     client: OAuthClientInformationFull,
   ): Promise<OAuthClientInformationFull> {
-    const jsonStr = JSON.stringify(client);
-    await pool.query(
-      `INSERT INTO mcp_oauth_clients (client_id, raw) VALUES ($1, $2::jsonb)
-       ON CONFLICT (client_id) DO UPDATE SET raw = EXCLUDED.raw`,
-      [client.client_id, jsonStr],
-    );
-    return client;
+    try {
+      const jsonStr = JSON.stringify(client);
+      await pool.query(
+        `INSERT INTO mcp_oauth_clients (client_id, raw) VALUES ($1, $2::jsonb)
+         ON CONFLICT (client_id) DO UPDATE SET raw = EXCLUDED.raw`,
+        [client.client_id, jsonStr],
+      );
+      return client;
+    } catch (err) {
+      console.error("[oauth-store] registerClient error:", err);
+      throw err;
+    }
   }
 }
 

@@ -3,14 +3,14 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { ghlRequest } from "../services/ghl-client.js";
 import { toolResult, withErrorHandling } from "./helpers.js";
 
-const locationIdField = z.string().describe("ID da subconta (obtido via ghl_locations_list)");
+const locationIdField = z.string().describe("Subaccount ID (obtained via ghl_locations_list)");
 
 export function registerTagTools(server: McpServer): void {
   server.registerTool(
     "ghl_tags_list",
     {
-      title: "Listar tags",
-      description: "Lista todas as tags cadastradas em uma subconta.",
+      title: "List Tags",
+      description: "Lists all tags configured in a subaccount.",
       inputSchema: { locationId: locationIdField },
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
@@ -23,8 +23,8 @@ export function registerTagTools(server: McpServer): void {
   server.registerTool(
     "ghl_tags_create",
     {
-      title: "Criar tag",
-      description: "Cria uma nova tag em uma subconta.",
+      title: "Create Tag",
+      description: "Creates a new tag in a subaccount.",
       inputSchema: { locationId: locationIdField, name: z.string() },
       annotations: { destructiveHint: false, idempotentHint: false, openWorldHint: true },
     },

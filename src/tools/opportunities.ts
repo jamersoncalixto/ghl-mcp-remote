@@ -3,14 +3,14 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { ghlRequest } from "../services/ghl-client.js";
 import { toolResult, withErrorHandling } from "./helpers.js";
 
-const locationIdField = z.string().describe("ID da subconta (obtido via ghl_locations_list)");
+const locationIdField = z.string().describe("Subaccount ID (obtained via ghl_locations_list)");
 
 export function registerOpportunityTools(server: McpServer): void {
   server.registerTool(
     "ghl_pipelines_list",
     {
-      title: "Listar pipelines",
-      description: "Lista os pipelines de vendas de uma subconta, com seus estágios (stages).",
+      title: "List Pipelines",
+      description: "Lists sales pipelines in a subaccount, including their stages.",
       inputSchema: { locationId: locationIdField },
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
@@ -23,8 +23,8 @@ export function registerOpportunityTools(server: McpServer): void {
   server.registerTool(
     "ghl_opportunities_search",
     {
-      title: "Buscar oportunidades",
-      description: "Busca/lista oportunidades de uma subconta, opcionalmente filtrando por pipeline, estágio ou contato.",
+      title: "Search Opportunities",
+      description: "Search or list opportunities in a subaccount, optionally filtering by pipeline, stage, status, or contact.",
       inputSchema: {
         locationId: locationIdField,
         pipelineId: z.string().optional(),
@@ -50,8 +50,8 @@ export function registerOpportunityTools(server: McpServer): void {
   server.registerTool(
     "ghl_opportunities_get",
     {
-      title: "Obter oportunidade",
-      description: "Retorna os detalhes de uma oportunidade pelo id.",
+      title: "Get Opportunity",
+      description: "Returns opportunity details by ID.",
       inputSchema: { locationId: locationIdField, opportunityId: z.string() },
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
@@ -64,8 +64,8 @@ export function registerOpportunityTools(server: McpServer): void {
   server.registerTool(
     "ghl_opportunities_create",
     {
-      title: "Criar oportunidade",
-      description: "Cria uma nova oportunidade em um pipeline/estágio para um contato.",
+      title: "Create Opportunity",
+      description: "Creates a new opportunity in a pipeline stage for a contact.",
       inputSchema: {
         locationId: locationIdField,
         pipelineId: z.string(),
@@ -97,8 +97,8 @@ export function registerOpportunityTools(server: McpServer): void {
   server.registerTool(
     "ghl_opportunities_update",
     {
-      title: "Atualizar oportunidade",
-      description: "Atualiza campos de uma oportunidade (nome, valor, estágio, status, etc.).",
+      title: "Update Opportunity",
+      description: "Updates fields on an opportunity (name, value, stage, status, etc.).",
       inputSchema: { locationId: locationIdField, opportunityId: z.string(), fields: z.record(z.any()) },
       annotations: { destructiveHint: false, idempotentHint: true, openWorldHint: true },
     },
@@ -126,8 +126,8 @@ export function registerOpportunityTools(server: McpServer): void {
   server.registerTool(
     "ghl_opportunities_delete",
     {
-      title: "Excluir oportunidade",
-      description: "Exclui permanentemente uma oportunidade. Ação irreversível — confirme com o usuário antes de chamar.",
+      title: "Delete Opportunity",
+      description: "Permanently deletes an opportunity.",
       inputSchema: { locationId: locationIdField, opportunityId: z.string() },
       annotations: { destructiveHint: true, idempotentHint: true, openWorldHint: true },
     },

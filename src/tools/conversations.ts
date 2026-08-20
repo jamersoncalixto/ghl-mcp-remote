@@ -3,14 +3,14 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { ghlRequest } from "../services/ghl-client.js";
 import { toolResult, withErrorHandling } from "./helpers.js";
 
-const locationIdField = z.string().describe("ID da subconta (obtido via ghl_locations_list)");
+const locationIdField = z.string().describe("Subaccount ID (obtained via ghl_locations_list)");
 
 export function registerConversationTools(server: McpServer): void {
   server.registerTool(
     "ghl_conversations_list",
     {
-      title: "Listar conversas",
-      description: "Lista conversas (SMS/email/etc.) de uma subconta, opcionalmente filtrando por contato.",
+      title: "List Conversations",
+      description: "List conversations (SMS/Email/etc.) in a subaccount, optionally filtering by contact.",
       inputSchema: {
         locationId: locationIdField,
         contactId: z.string().optional(),
@@ -33,8 +33,8 @@ export function registerConversationTools(server: McpServer): void {
   server.registerTool(
     "ghl_conversations_get",
     {
-      title: "Obter conversa",
-      description: "Retorna os detalhes de uma conversa pelo id.",
+      title: "Get Conversation",
+      description: "Returns details of a conversation by ID.",
       inputSchema: { locationId: locationIdField, conversationId: z.string() },
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
@@ -47,8 +47,8 @@ export function registerConversationTools(server: McpServer): void {
   server.registerTool(
     "ghl_conversations_list_messages",
     {
-      title: "Listar mensagens de uma conversa",
-      description: "Lista as mensagens trocadas dentro de uma conversa.",
+      title: "List Conversation Messages",
+      description: "Lists messages sent and received within a conversation.",
       inputSchema: { locationId: locationIdField, conversationId: z.string(), limit: z.number().int().min(1).max(100).default(20) },
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
@@ -76,16 +76,15 @@ export function registerConversationTools(server: McpServer): void {
   server.registerTool(
     "ghl_conversations_send_message",
     {
-      title: "Enviar mensagem (SMS/Email)",
+      title: "Send Message",
       description:
-        "Envia uma mensagem SMS ou Email para um contato, criando/continuando a conversa. Ação com efeito real no mundo — " +
-        "confirme o conteúdo e destinatário com o usuário antes de chamar.",
+        "Sends an SMS or Email message to a contact, creating or continuing a conversation.",
       inputSchema: {
         locationId: locationIdField,
         contactId: z.string(),
         type: z.enum(["SMS", "Email"]),
-        message: z.string().describe("Corpo da mensagem (texto para SMS, HTML ou texto para Email)"),
-        subject: z.string().optional().describe("Assunto, obrigatório apenas para Email"),
+        message: z.string().describe("Message body (text for SMS, text/HTML for Email)"),
+        subject: z.string().optional().describe("Subject line (required for Email)"),
       },
       annotations: { destructiveHint: false, idempotentHint: false, openWorldHint: true },
     },

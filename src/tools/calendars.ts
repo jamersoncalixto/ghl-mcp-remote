@@ -3,14 +3,14 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { ghlRequest } from "../services/ghl-client.js";
 import { toolResult, withErrorHandling } from "./helpers.js";
 
-const locationIdField = z.string().describe("ID da subconta (obtido via ghl_locations_list)");
+const locationIdField = z.string().describe("Subaccount ID (obtained via ghl_locations_list)");
 
 export function registerCalendarTools(server: McpServer): void {
   server.registerTool(
     "ghl_calendars_list",
     {
-      title: "Listar calendários",
-      description: "Lista os calendários configurados em uma subconta.",
+      title: "List Calendars",
+      description: "Get all calendars configured in a subaccount.",
       inputSchema: { locationId: locationIdField },
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
@@ -23,13 +23,13 @@ export function registerCalendarTools(server: McpServer): void {
   server.registerTool(
     "ghl_calendars_get_free_slots",
     {
-      title: "Obter horários disponíveis",
-      description: "Retorna os horários livres de um calendário em um intervalo de datas (timestamps em ms).",
+      title: "Get Available Slots",
+      description: "Returns available free slots for a calendar within a date range (timestamps in ms).",
       inputSchema: {
         locationId: locationIdField,
         calendarId: z.string(),
-        startDate: z.number().describe("Início do intervalo, epoch ms"),
-        endDate: z.number().describe("Fim do intervalo, epoch ms"),
+        startDate: z.number().describe("Start of date range, epoch ms"),
+        endDate: z.number().describe("End of date range, epoch ms"),
         timezone: z.string().optional(),
       },
       annotations: { readOnlyHint: true, openWorldHint: true },
@@ -62,13 +62,13 @@ export function registerCalendarTools(server: McpServer): void {
   server.registerTool(
     "ghl_appointments_list",
     {
-      title: "Listar agendamentos",
-      description: "Lista eventos/agendamentos de calendário em uma subconta, em um intervalo de datas (timestamps em ms).",
+      title: "List Appointments",
+      description: "Lists calendar events and appointments in a subaccount within a date range (timestamps in ms).",
       inputSchema: {
         locationId: locationIdField,
         calendarId: z.string().optional(),
-        startTime: z.number().describe("Início do intervalo, epoch ms"),
-        endTime: z.number().describe("Fim do intervalo, epoch ms"),
+        startTime: z.number().describe("Start of range, epoch ms"),
+        endTime: z.number().describe("End of range, epoch ms"),
       },
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
@@ -87,8 +87,8 @@ export function registerCalendarTools(server: McpServer): void {
   server.registerTool(
     "ghl_appointments_get",
     {
-      title: "Obter agendamento",
-      description: "Retorna os detalhes de um agendamento pelo id.",
+      title: "Get Appointment",
+      description: "Returns appointment details by ID.",
       inputSchema: { locationId: locationIdField, appointmentId: z.string() },
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
@@ -105,14 +105,14 @@ export function registerCalendarTools(server: McpServer): void {
   server.registerTool(
     "ghl_appointments_create",
     {
-      title: "Criar agendamento",
-      description: "Cria um novo agendamento em um calendário para um contato.",
+      title: "Create Appointment",
+      description: "Creates a new appointment in a calendar for a contact.",
       inputSchema: {
         locationId: locationIdField,
         calendarId: z.string(),
         contactId: z.string(),
-        startTime: z.string().describe("ISO 8601, ex: 2026-08-01T14:00:00-03:00"),
-        endTime: z.string().describe("ISO 8601"),
+        startTime: z.string().describe("ISO 8601 string, e.g. 2026-08-01T14:00:00-03:00"),
+        endTime: z.string().describe("ISO 8601 string"),
         title: z.string().optional(),
         appointmentStatus: z.enum(["new", "confirmed", "cancelled", "showed", "noshow"]).optional(),
         additionalFields: z.record(z.any()).optional(),
@@ -138,8 +138,8 @@ export function registerCalendarTools(server: McpServer): void {
   server.registerTool(
     "ghl_appointments_update",
     {
-      title: "Atualizar agendamento",
-      description: "Atualiza campos de um agendamento existente (horário, status, título, etc.).",
+      title: "Update Appointment",
+      description: "Updates fields of an existing appointment (time, status, title, etc.).",
       inputSchema: { locationId: locationIdField, appointmentId: z.string(), fields: z.record(z.any()) },
       annotations: { destructiveHint: false, idempotentHint: true, openWorldHint: true },
     },
@@ -167,8 +167,8 @@ export function registerCalendarTools(server: McpServer): void {
   server.registerTool(
     "ghl_appointments_delete",
     {
-      title: "Cancelar/excluir agendamento",
-      description: "Exclui um agendamento. Ação irreversível — confirme com o usuário antes de chamar.",
+      title: "Delete Appointment",
+      description: "Deletes an appointment.",
       inputSchema: { locationId: locationIdField, appointmentId: z.string() },
       annotations: { destructiveHint: true, idempotentHint: true, openWorldHint: true },
     },

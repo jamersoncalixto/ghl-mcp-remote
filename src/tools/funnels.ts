@@ -3,14 +3,14 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { ghlRequest } from "../services/ghl-client.js";
 import { toolResult, withErrorHandling } from "./helpers.js";
 
-const locationIdField = z.string().describe("ID da subconta (obtido via ghl_locations_list)");
+const locationIdField = z.string().describe("Subaccount ID (obtained via ghl_locations_list)");
 
 export function registerFunnelTools(server: McpServer): void {
   server.registerTool(
     "ghl_funnels_list",
     {
-      title: "Listar funnels",
-      description: "Lista os funnels (funis de páginas) configurados em uma subconta.",
+      title: "List Funnels",
+      description: "Lists page funnels configured in a subaccount.",
       inputSchema: { locationId: locationIdField, limit: z.number().int().min(1).max(100).default(20) },
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
@@ -28,8 +28,8 @@ export function registerFunnelTools(server: McpServer): void {
   server.registerTool(
     "ghl_funnels_list_pages",
     {
-      title: "Listar páginas de um funnel",
-      description: "Lista as páginas que compõem um funnel específico.",
+      title: "List Funnel Pages",
+      description: "Lists pages that belong to a specific funnel.",
       inputSchema: { locationId: locationIdField, funnelId: z.string() },
       annotations: { readOnlyHint: true, openWorldHint: true },
     },

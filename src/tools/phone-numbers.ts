@@ -3,28 +3,26 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { ghlRequest } from "../services/ghl-client.js";
 import { toolResult, withErrorHandling } from "./helpers.js";
 
-const locationIdField = z.string().describe("ID da subconta (obtido via ghl_locations_list)");
+const locationIdField = z.string().describe("Subaccount ID (obtained via ghl_locations_list)");
 
 export function registerPhoneNumberTools(server: McpServer): void {
   server.registerTool(
     "ghl_phone_numbers_search_available",
     {
-      title: "Buscar números disponíveis para compra",
+      title: "Search Available Phone Numbers",
       description:
-        "Busca números de telefone disponíveis para compra no sistema de telefonia nativo da GHL (LC Phone) para uma " +
-        "subconta, filtrando por DDD/prefixo, país e capacidades (SMS/MMS/voz). Somente leitura — não compra nada. " +
-        "A resposta inclui um fingerprintId: guarde-o e reutilize-o exatamente ao chamar ghl_phone_numbers_purchase " +
-        "para o número escolhido nesta mesma busca.",
+        "Searches available phone numbers to purchase in LC Phone for a subaccount. " +
+        "Includes fingerprintId in response which MUST be passed when purchasing.",
       inputSchema: {
         locationId: locationIdField,
-        countryCode: z.string().default("US").describe("Código ISO alpha-2 do país, ex: US, CA"),
-        firstPart: z.string().optional().describe("Início do número (equivalente a DDD/área), ex: '415'"),
-        lastPart: z.string().optional().describe("Final do número desejado"),
-        anywhere: z.string().optional().describe("Dígitos que devem aparecer em qualquer posição do número"),
+        countryCode: z.string().default("US").describe("ISO alpha-2 country code, e.g. US, CA"),
+        firstPart: z.string().optional().describe("Area code / number prefix, e.g. '415'"),
+        lastPart: z.string().optional().describe("Desired ending digits"),
+        anywhere: z.string().optional().describe("Digits matching anywhere in the number"),
         numberTypes: z
           .array(z.enum(["local", "tollFree", "mobile"]))
           .optional()
-          .describe("Tipos de número aceitos"),
+          .describe("Accepted number types"),
         smsEnabled: z.boolean().optional(),
         mmsEnabled: z.boolean().optional(),
         voiceEnabled: z.boolean().optional(),
@@ -53,13 +51,13 @@ export function registerPhoneNumberTools(server: McpServer): void {
   server.registerTool(
     "ghl_phone_numbers_list_active",
     {
-      title: "Listar números já provisionados",
-      description: "Lista os números de telefone já ativos/provisionados em uma subconta no LC Phone.",
+      title: "List Active Phone Numbers",
+      description: "Lists active phone numbers provisioned in a subaccount.",
       inputSchema: {
         locationId: locationIdField,
         page: z.number().int().min(0).default(0),
         pageSize: z.number().int().min(1).max(1000).default(50),
-        searchFilter: z.string().optional().describe("Filtra por trecho do número"),
+        searchFilter: z.string().optional().describe("Filter by number substring"),
       },
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
@@ -78,25 +76,20 @@ export function registerPhoneNumberTools(server: McpServer): void {
   server.registerTool(
     "ghl_phone_numbers_purchase",
     {
-      title: "Comprar/ativar número de telefone",
+      title: "Purchase Phone Number",
       description:
-        "Compra um número de telefone específico para uma subconta. AÇÃO FINANCEIRA REAL: gera cobrança recorrente " +
-        "na conta da agência. Confirme número, subconta e custo com o usuário antes de chamar. " +
-        "IMPORTANTE: fingerprintId deve ser exatamente o valor retornado por ghl_phone_numbers_search_available na " +
-        "MESMA busca que retornou este phoneNumber — um fingerprintId novo/desconectado faz a compra travar em " +
-        "timeout (NUMBERS_UNABLE_PURCHASE_TIMEOUT). Não envie countryCode/numberType/addressSid/bundleSid/etc. a não " +
-        "ser que o usuário peça explicitamente ou uma tentativa anterior tenha pedido esses campos — o payload " +
-        "mínimo validado é só phoneNumber + fingerprintId.",
+        "Purchases a phone number for a subaccount. " +
+        "fingerprintId MUST be the exact value returned by ghl_phone_numbers_search_available from the same search.",
       inputSchema: {
         locationId: locationIdField,
-        phoneNumber: z.string().describe("Número a comprar, no formato retornado pela busca (ex: '+15623625530')"),
+        phoneNumber: z.string().describe("Phone number to purchase (e.g. '+15623625530')"),
         fingerprintId: z
           .string()
-          .describe("fingerprintId retornado por ghl_phone_numbers_search_available na mesma busca deste número"),
+          .describe("fingerprintId returned from ghl_phone_numbers_search_available"),
         countryCode: z.string().optional(),
         numberType: z.enum(["local", "tollFree", "mobile"]).optional(),
-        addressSid: z.string().optional().describe("SID do endereço regulatório — só se uma tentativa anterior exigir"),
-        bundleSid: z.string().optional().describe("SID do regulatory bundle — só se uma tentativa anterior exigir"),
+        addressSid: z.string().optional(),
+        bundleSid: z.string().optional(),
         paymentIntentId: z.string().optional(),
         paymentMethodId: z.string().optional(),
         stripeAccountId: z.string().optional(),

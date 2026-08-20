@@ -3,17 +3,17 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { ghlRequest } from "../services/ghl-client.js";
 import { toolResult, withErrorHandling } from "./helpers.js";
 
-const locationIdField = z.string().describe("ID da subconta (obtido via ghl_locations_list)");
+const locationIdField = z.string().describe("Subaccount ID (obtained via ghl_locations_list)");
 
 export function registerContactTools(server: McpServer): void {
   server.registerTool(
     "ghl_contacts_search",
     {
-      title: "Buscar contatos",
-      description: "Busca/lista contatos de uma subconta, com filtro de texto opcional.",
+      title: "Search Contacts",
+      description: "Search or list contacts in a subaccount with optional query text filtering.",
       inputSchema: {
         locationId: locationIdField,
-        query: z.string().optional().describe("Texto livre para buscar (nome, email, telefone)"),
+        query: z.string().optional().describe("Search text (name, email, phone)"),
         limit: z.number().int().min(1).max(100).default(20),
       },
       annotations: { readOnlyHint: true, openWorldHint: true },
@@ -34,8 +34,8 @@ export function registerContactTools(server: McpServer): void {
   server.registerTool(
     "ghl_contacts_get",
     {
-      title: "Obter contato",
-      description: "Retorna os detalhes completos de um contato pelo contactId.",
+      title: "Get Contact",
+      description: "Returns full details for a single contact by contactId.",
       inputSchema: { locationId: locationIdField, contactId: z.string() },
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
@@ -48,8 +48,8 @@ export function registerContactTools(server: McpServer): void {
   server.registerTool(
     "ghl_contacts_create",
     {
-      title: "Criar contato",
-      description: "Cria um novo contato em uma subconta.",
+      title: "Create Contact",
+      description: "Creates a new contact in a subaccount.",
       inputSchema: {
         locationId: locationIdField,
         firstName: z.string().optional(),
@@ -60,7 +60,7 @@ export function registerContactTools(server: McpServer): void {
         additionalFields: z
           .record(z.any())
           .optional()
-          .describe("Campos extras aceitos pela Contacts API v2 da GHL (customFields, address1, city, etc.)"),
+          .describe("Additional fields accepted by GHL Contacts API v2 (customFields, address1, city, etc.)"),
       },
       annotations: { destructiveHint: false, idempotentHint: false, openWorldHint: true },
     },
@@ -83,12 +83,12 @@ export function registerContactTools(server: McpServer): void {
   server.registerTool(
     "ghl_contacts_update",
     {
-      title: "Atualizar contato",
-      description: "Atualiza campos de um contato existente.",
+      title: "Update Contact",
+      description: "Updates fields on an existing contact.",
       inputSchema: {
         locationId: locationIdField,
         contactId: z.string(),
-        fields: z.record(z.any()).describe("Campos a atualizar (email, phone, firstName, customFields, etc.)"),
+        fields: z.record(z.any()).describe("Fields to update (email, phone, firstName, customFields, etc.)"),
       },
       annotations: { destructiveHint: false, idempotentHint: true, openWorldHint: true },
     },
@@ -116,8 +116,8 @@ export function registerContactTools(server: McpServer): void {
   server.registerTool(
     "ghl_contacts_delete",
     {
-      title: "Excluir contato",
-      description: "Exclui permanentemente um contato. Ação irreversível — confirme com o usuário antes de chamar.",
+      title: "Delete Contact",
+      description: "Permanently deletes a contact.",
       inputSchema: { locationId: locationIdField, contactId: z.string() },
       annotations: { destructiveHint: true, idempotentHint: true, openWorldHint: true },
     },
@@ -130,8 +130,8 @@ export function registerContactTools(server: McpServer): void {
   server.registerTool(
     "ghl_contacts_add_tags",
     {
-      title: "Adicionar tags a um contato",
-      description: "Adiciona uma ou mais tags a um contato existente.",
+      title: "Add Tags to Contact",
+      description: "Adds one or more tags to an existing contact.",
       inputSchema: { locationId: locationIdField, contactId: z.string(), tags: z.array(z.string()) },
       annotations: { destructiveHint: false, idempotentHint: true, openWorldHint: true },
     },
@@ -151,8 +151,8 @@ export function registerContactTools(server: McpServer): void {
   server.registerTool(
     "ghl_contacts_remove_tags",
     {
-      title: "Remover tags de um contato",
-      description: "Remove uma ou mais tags de um contato existente.",
+      title: "Remove Tags from Contact",
+      description: "Removes one or more tags from an existing contact.",
       inputSchema: { locationId: locationIdField, contactId: z.string(), tags: z.array(z.string()) },
       annotations: { destructiveHint: true, idempotentHint: true, openWorldHint: true },
     },
@@ -172,10 +172,8 @@ export function registerContactTools(server: McpServer): void {
   server.registerTool(
     "ghl_contacts_add_to_workflow",
     {
-      title: "Inscrever contato em um workflow",
-      description:
-        "Inscreve (enroll) um contato em um workflow. A GHL não expõe um endpoint genérico de 'trigger' de workflow — " +
-        "inscrever um contato é o mecanismo equivalente.",
+      title: "Enroll Contact in Workflow",
+      description: "Enrolls a contact in a workflow.",
       inputSchema: { locationId: locationIdField, contactId: z.string(), workflowId: z.string() },
       annotations: { destructiveHint: false, idempotentHint: false, openWorldHint: true },
     },

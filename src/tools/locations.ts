@@ -42,10 +42,10 @@ export function registerLocationTools(server: McpServer): void {
   server.registerTool(
     "ghl_locations_list",
     {
-      title: "Listar subcontas da agência",
+      title: "List Agency Subaccounts",
       description:
-        "Lista todas as subcontas (locations) do GoHighLevel onde este app está instalado, com id e nome. " +
-        "Use esta tool primeiro para descobrir o locationId correto antes de chamar qualquer outra tool.",
+        "Lists all subaccounts (locations) in GoHighLevel where this app is installed, including ID and name. " +
+        "Use this tool first to discover the correct locationId before invoking location-scoped tools.",
       inputSchema: {},
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
@@ -61,10 +61,10 @@ export function registerLocationTools(server: McpServer): void {
   server.registerTool(
     "ghl_locations_get",
     {
-      title: "Detalhes de uma subconta",
-      description: "Retorna detalhes de uma subconta específica pelo locationId.",
+      title: "Get Subaccount Details",
+      description: "Returns full details for a specific subaccount by locationId.",
       inputSchema: {
-        locationId: z.string().describe("ID da subconta (obtido via ghl_locations_list)"),
+        locationId: z.string().describe("Subaccount ID (obtained via ghl_locations_list)"),
       },
       annotations: { readOnlyHint: true, openWorldHint: true },
     },

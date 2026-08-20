@@ -31,6 +31,20 @@ app.get("/healthz", (_req, res) => {
   res.json({ ok: true });
 });
 
+app.get("/favicon.ico", (_req, res) => {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <rect width="100" height="100" rx="22" fill="#2563EB"/>
+    <path d="M25 35h50v8H25zm0 14h50v8H25zm0 14h32v8H25z" fill="#FFFFFF"/>
+    <circle cx="72" cy="61" r="7" fill="#60A5FA"/>
+  </svg>`;
+  res.setHeader("Content-Type", "image/svg+xml");
+  res.send(svg);
+});
+
+app.get("/icon.png", (_req, res) => {
+  res.redirect("/favicon.ico");
+});
+
 // Mounts /.well-known/oauth-authorization-server, /.well-known/oauth-protected-resource/mcp,
 // /register (DCR), /authorize, /token, /revoke.
 app.use(
@@ -38,7 +52,7 @@ app.use(
     provider,
     issuerUrl: PUBLIC_URL,
     resourceServerUrl: new URL("/mcp", PUBLIC_URL),
-    resourceName: "ghl-mcp-remote",
+    resourceName: "GHL Remote MCP",
     scopesSupported: [MCP_SCOPE],
   }),
 );

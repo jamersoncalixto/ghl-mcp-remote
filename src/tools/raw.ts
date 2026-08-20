@@ -7,23 +7,21 @@ export function registerRawTool(server: McpServer): void {
   server.registerTool(
     "ghl_raw_request",
     {
-      title: "Chamada direta à API da GHL (escape hatch)",
+      title: "Execute Raw GHL API Request",
       description:
-        "Faz uma chamada direta a qualquer endpoint da GoHighLevel API v2 (services.leadconnectorhq.com) que ainda não " +
-        "tenha uma tool dedicada. Use como último recurso quando nenhuma outra tool cobrir o que é necessário — consulte " +
-        "a documentação oficial da GHL para o path e o formato exatos. O locationId é injetado automaticamente na " +
-        "resolução do token; inclua-o também na query/body se o endpoint exigir.",
+        "Executes a direct HTTP request to any endpoint in GoHighLevel API v2 (services.leadconnectorhq.com). " +
+        "Use as an escape hatch when no dedicated tool covers the required endpoint.",
       inputSchema: {
         method: z.enum(["GET", "POST", "PUT", "PATCH", "DELETE"]),
-        path: z.string().describe("Path relativo, ex: /contacts/ ou /custom-menus/"),
+        path: z.string().describe("Relative endpoint path, e.g. /contacts/ or /custom-menus/"),
         locationId: z
           .string()
           .optional()
-          .describe("Sub-conta alvo. Omitir apenas para endpoints de nível de agência (ex: /oauth/installedLocations)."),
+          .describe("Target subaccount ID. Omit only for agency-level endpoints."),
         useCompanyToken: z
           .boolean()
           .optional()
-          .describe("true para usar o token de agência em vez do token da subconta"),
+          .describe("Set to true to use the agency company token instead of subaccount token"),
         query: z.record(z.union([z.string(), z.number(), z.boolean()])).optional(),
         body: z.record(z.any()).optional(),
       },

@@ -7,7 +7,7 @@ function errorPage(status: number, message: string): { status: number; body: str
   return {
     status,
     body: `<!doctype html><html><body style="font-family: sans-serif; max-width: 32rem; margin: 4rem auto;">
-      <h1>Não foi possível conectar</h1><p>${message}</p></body></html>`,
+      <h1>Unable to Connect</h1><p>${message}</p></body></html>`,
   };
 }
 
@@ -24,14 +24,14 @@ export async function ghlCallbackHandler(req: Request, res: Response): Promise<v
   const ghlError = typeof req.query.error === "string" ? req.query.error : undefined;
 
   if (!ghlState) {
-    const page = errorPage(400, "Parâmetro state ausente na resposta da GHL.");
+    const page = errorPage(400, "Missing state parameter in response from GHL.");
     res.status(page.status).send(page.body);
     return;
   }
 
   const pending = await consumePendingAuth(ghlState);
   if (!pending) {
-    const page = errorPage(400, "Esta tentativa de autorização expirou ou já foi usada. Volte ao Claude/ChatGPT e tente conectar novamente.");
+    const page = errorPage(400, "This authorization attempt has expired or was already used. Please return to Claude/ChatGPT and try connecting again.");
     res.status(page.status).send(page.body);
     return;
   }

@@ -36,7 +36,7 @@ export const AUTH_CODE_TTL_MS = 5 * 60 * 1000; // 5 min, single-use
 export function ghlCallbackUrl(): string {
   const publicUrl = process.env.PUBLIC_URL;
   if (!publicUrl) throw new Error("Missing required env var PUBLIC_URL");
-  return new URL("/oauth/ghl/callback", publicUrl).toString();
+  return new URL("/oauth/callback", publicUrl).toString();
 }
 
 /**

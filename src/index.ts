@@ -44,7 +44,7 @@ app.use(
 
 // GHL redirects here once the agency admin approves/denies on GHL's own consent screen —
 // this is the "login" for this server, see auth/ghl-callback.ts for the full flow.
-app.get("/oauth/ghl/callback", (req, res) => {
+app.get("/oauth/callback", (req, res) => {
   ghlCallbackHandler(req, res).catch((err) => {
     console.error("[ghl-mcp-remote] unhandled error in GHL callback:", err);
     if (!res.headersSent) res.status(500).send("Internal server error");

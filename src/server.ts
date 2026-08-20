@@ -10,6 +10,13 @@ import { registerTagTools } from "./tools/tags.js";
 import { registerCustomFieldTools } from "./tools/custom-fields.js";
 import { registerWorkflowTools } from "./tools/workflows.js";
 import { registerPhoneNumberTools } from "./tools/phone-numbers.js";
+import { registerEmailTools } from "./tools/emails.js";
+import { registerInvoiceTools } from "./tools/invoices.js";
+import { registerProductTools } from "./tools/products.js";
+import { registerSocialPlannerTools } from "./tools/social-planner.js";
+import { registerBlogTools } from "./tools/blogs.js";
+import { registerMediaTools } from "./tools/medias.js";
+import { registerUserTools } from "./tools/users.js";
 import { registerRawTool } from "./tools/raw.js";
 
 /**
@@ -19,7 +26,7 @@ import { registerRawTool } from "./tools/raw.js";
  */
 export function createMcpServer(): McpServer {
   const server = new McpServer({
-    name: "ghl-mcp-remote",
+    name: "GHL Remote MCP",
     version: "0.1.0",
   });
 
@@ -34,6 +41,13 @@ export function createMcpServer(): McpServer {
   registerCustomFieldTools(server);
   registerWorkflowTools(server);
   registerPhoneNumberTools(server);
+  registerEmailTools(server);
+  registerInvoiceTools(server);
+  registerProductTools(server);
+  registerSocialPlannerTools(server);
+  registerBlogTools(server);
+  registerMediaTools(server);
+  registerUserTools(server);
   registerRawTool(server);
 
   return server;

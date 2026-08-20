@@ -3,6 +3,7 @@
  * GHL Marketplace app was configured with, or GHL will reject/trim the authorization request.
  */
 export const GHL_SCOPES = [
+  "companies.readonly",
   "locations.readonly",
   "contacts.readonly",
   "contacts.write",

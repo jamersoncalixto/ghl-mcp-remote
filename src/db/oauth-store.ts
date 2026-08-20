@@ -11,16 +11,19 @@ import type { OAuthRegisteredClientsStore } from "@modelcontextprotocol/sdk/serv
 export class PgOAuthClientsStore implements OAuthRegisteredClientsStore {
   async getClient(clientId: string): Promise<OAuthClientInformationFull | undefined> {
     const { rows } = await pool.query(`SELECT raw FROM mcp_oauth_clients WHERE client_id = $1`, [clientId]);
-    return rows[0]?.raw as OAuthClientInformationFull | undefined;
+    if (!rows[0]) return undefined;
+    const raw = rows[0].raw;
+    return (typeof raw === "string" ? JSON.parse(raw) : raw) as OAuthClientInformationFull;
   }
 
   async registerClient(
     client: OAuthClientInformationFull,
   ): Promise<OAuthClientInformationFull> {
+    const jsonStr = JSON.stringify(client);
     await pool.query(
-      `INSERT INTO mcp_oauth_clients (client_id, raw) VALUES ($1, $2)
+      `INSERT INTO mcp_oauth_clients (client_id, raw) VALUES ($1, $2::jsonb)
        ON CONFLICT (client_id) DO UPDATE SET raw = EXCLUDED.raw`,
-      [client.client_id, client],
+      [client.client_id, jsonStr],
     );
     return client;
   }

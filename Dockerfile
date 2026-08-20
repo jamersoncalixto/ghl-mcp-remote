@@ -17,6 +17,7 @@ COPY package.json package-lock.json* ./
 RUN npm install --omit=dev
 COPY --from=build /app/dist ./dist
 COPY db ./db
+COPY ghl-icon.svg ./ghl-icon.svg
 
 # A plataforma que fizer o deploy define $PORT; o processo lê essa env em runtime.
 EXPOSE 8080

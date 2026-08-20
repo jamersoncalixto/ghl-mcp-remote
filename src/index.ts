@@ -31,18 +31,16 @@ app.get("/healthz", (_req, res) => {
   res.json({ ok: true });
 });
 
-app.get("/favicon.ico", (_req, res) => {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-    <rect width="100" height="100" rx="22" fill="#2563EB"/>
-    <path d="M25 35h50v8H25zm0 14h50v8H25zm0 14h32v8H25z" fill="#FFFFFF"/>
-    <circle cx="72" cy="61" r="7" fill="#60A5FA"/>
-  </svg>`;
-  res.setHeader("Content-Type", "image/svg+xml");
-  res.send(svg);
-});
+import fs from "node:fs";
 
-app.get("/icon.png", (_req, res) => {
-  res.redirect("/favicon.ico");
+const ghlIconSvg = fs.existsSync("ghl-icon.svg")
+  ? fs.readFileSync("ghl-icon.svg", "utf-8")
+  : `<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="512" height="512" rx="104" fill="#0B2440"/><g><polygon points="88,178 228,178 158,90" fill="#F4C217"/><polygon points="158,90 228,178 158,178" fill="#000000" opacity="0.14"/><rect x="132" y="178" width="52" height="252" fill="#F4C217"/></g><g><polygon points="284,178 424,178 354,90" fill="#4CAF2E"/><polygon points="354,90 424,178 354,178" fill="#000000" opacity="0.14"/><rect x="328" y="178" width="52" height="252" fill="#4CAF2E"/></g><g><polygon points="196,292 316,292 256,206" fill="#2D9CDB"/><polygon points="256,206 316,292 256,292" fill="#000000" opacity="0.16"/><rect x="230" y="292" width="52" height="138" fill="#2D9CDB"/></g></svg>`;
+
+app.get(["/favicon.ico", "/favicon.svg", "/icon.svg", "/logo.svg", "/ghl-icon.svg", "/apple-touch-icon.png", "/icon.png"], (_req, res) => {
+  res.setHeader("Content-Type", "image/svg+xml");
+  res.setHeader("Cache-Control", "public, max-age=86400");
+  res.send(ghlIconSvg);
 });
 
 // Mounts /.well-known/oauth-authorization-server, /.well-known/oauth-protected-resource/mcp,

@@ -33,11 +33,62 @@ app.get("/healthz", (_req, res) => {
 
 import fs from "node:fs";
 
+const ghlIconPng = fs.existsSync("ghl-icon.png")
+  ? fs.readFileSync("ghl-icon.png")
+  : fs.existsSync("favicon.png")
+  ? fs.readFileSync("favicon.png")
+  : null;
+
 const ghlIconSvg = fs.existsSync("ghl-icon.svg")
   ? fs.readFileSync("ghl-icon.svg", "utf-8")
   : `<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="512" height="512" rx="104" fill="#0B2440"/><g><polygon points="88,178 228,178 158,90" fill="#F4C217"/><polygon points="158,90 228,178 158,178" fill="#000000" opacity="0.14"/><rect x="132" y="178" width="52" height="252" fill="#F4C217"/></g><g><polygon points="284,178 424,178 354,90" fill="#4CAF2E"/><polygon points="354,90 424,178 354,178" fill="#000000" opacity="0.14"/><rect x="328" y="178" width="52" height="252" fill="#4CAF2E"/></g><g><polygon points="196,292 316,292 256,206" fill="#2D9CDB"/><polygon points="256,206 316,292 256,292" fill="#000000" opacity="0.16"/><rect x="230" y="292" width="52" height="138" fill="#2D9CDB"/></g></svg>`;
 
-app.get(["/favicon.ico", "/favicon.svg", "/icon.svg", "/logo.svg", "/ghl-icon.svg", "/apple-touch-icon.png", "/icon.png"], (_req, res) => {
+app.get("/", (_req, res) => {
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GHL Remote MCP Server</title>
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="512x512" href="/apple-touch-icon.png">
+  <meta property="og:image" content="${PUBLIC_URL.origin}/ghl-icon.png">
+</head>
+<body style="font-family: system-ui, sans-serif; display: grid; place-content: center; height: 100vh; margin: 0; background: #0B2440; color: #fff; text-align: center;">
+  <img src="/ghl-icon.png" width="128" height="128" style="border-radius: 24px; margin: 0 auto 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.3);" alt="HighLevel Logo" />
+  <h1 style="margin: 0 0 0.5rem; font-weight: 700;">GHL Remote MCP Server</h1>
+  <p style="opacity: 0.8; margin: 0;">Status: Active & Operational</p>
+</body>
+</html>`);
+});
+
+app.get(["/favicon.png", "/icon.png", "/apple-touch-icon.png", "/logo.png", "/ghl-icon.png"], (_req, res) => {
+  if (ghlIconPng) {
+    res.setHeader("Content-Type", "image/png");
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    res.send(ghlIconPng);
+  } else {
+    res.setHeader("Content-Type", "image/svg+xml");
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    res.send(ghlIconSvg);
+  }
+});
+
+app.get(["/favicon.ico"], (_req, res) => {
+  if (ghlIconPng) {
+    res.setHeader("Content-Type", "image/x-icon");
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    res.send(ghlIconPng);
+  } else {
+    res.setHeader("Content-Type", "image/svg+xml");
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    res.send(ghlIconSvg);
+  }
+});
+
+app.get(["/favicon.svg", "/icon.svg", "/logo.svg", "/ghl-icon.svg"], (_req, res) => {
   res.setHeader("Content-Type", "image/svg+xml");
   res.setHeader("Cache-Control", "public, max-age=86400");
   res.send(ghlIconSvg);

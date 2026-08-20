@@ -18,6 +18,9 @@ RUN npm install --omit=dev
 COPY --from=build /app/dist ./dist
 COPY db ./db
 COPY ghl-icon.svg ./ghl-icon.svg
+COPY ghl-icon.png ./ghl-icon.png
+COPY favicon.png ./favicon.png
+COPY favicon.ico ./favicon.ico
 
 # A plataforma que fizer o deploy define $PORT; o processo lê essa env em runtime.
 EXPOSE 8080
